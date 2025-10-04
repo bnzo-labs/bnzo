@@ -1,24 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Erick Benzo - Interactive Portfolio
 
-## Getting Started
+This is an interactive portfolio website built with [Next.js](https://nextjs.org) that features an AI-powered chat interface. The AI is trained to respond as Erick Benzo, a Senior Frontend Developer, using his actual professional data and experience.
 
-First, run the development server:
+## Features (V1)
 
+- 🤖 **AI-Powered Chat Interface**: Ask questions about Erick's work, experience, and skills
+- 💼 **Work Experience Showcase**: Detailed professional background and achievements
+- 🎮 **Interactive Game Mode**: Fun spaceship game with scoring system
+- 🌙 **Dark/Light Theme Toggle**: Beautiful theme switching
+- 📱 **Responsive Design**: Works perfectly on all devices
+- 🎨 **Modern UI**: Built with Tailwind CSS and Framer Motion
+- 🔄 **Real-time Responses**: AI responds with Erick's personality and expertise
+- 📧 **Contact Information**: Direct contact details and social links
+
+## AI Integration
+
+The portfolio includes a sophisticated AI system that:
+- Responds as Erick using his actual professional background
+- Provides detailed answers about work experience, skills, and projects
+- Gives witty responses to unrelated questions
+- Maintains Erick's enthusiastic and helpful personality
+- **Usage Limit**: Automatically switches to demo mode after 5 AI questions to control costs
+- Falls back to mock data if AI is unavailable or limit is reached
+
+### Usage Limits & Cost Control
+
+To manage OpenAI API costs, the system includes:
+- **5 Question Limit**: Users get 5 AI-enhanced responses per browser session
+- **Persistent Tracking**: Uses localStorage to remember usage across page refreshes
+- **Visual Indicators**: Shows remaining AI questions and demo mode status
+- **Graceful Degradation**: Seamlessly switches to mock data after limit
+- **User Notifications**: Clear messaging about usage limits and demo mode
+- **Reset Required**: Users must clear browser data to get more AI questions
+
+## Setup
+
+### Prerequisites
+
+- Node.js 18+ 
+- OpenAI API key
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+Create a `.env.local` file in the root directory:
+```bash
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+You can get an OpenAI API key from: https://platform.openai.com/api-keys
+
+4. Run the development server:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Usage Limit Behavior
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The system automatically manages OpenAI API usage:
+
+1. **First 5 Questions**: Full AI responses with Erick's personality
+2. **Question 6+**: Demo mode using mock data with clear notifications
+3. **Persistent Tracking**: Usage stored in browser localStorage
+4. **Visual Feedback**: 
+   - Green indicator: 3+ AI questions remaining
+   - Yellow indicator: 1-2 AI questions remaining  
+   - Orange indicator: Demo mode active
+5. **Reset Behavior**: Users must clear browser data to reset usage
+6. **Development Mode**: Reset button available for testing
+
+### Testing Usage Limits
+
+A test page is included to verify localStorage persistence:
+- Open `test-localstorage.html` in your browser
+- Simulate questions to test the tracking system
+- Verify that usage persists across page refreshes
 
 ## Learn More
 
