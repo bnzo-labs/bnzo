@@ -1,5 +1,5 @@
 import { GameLogicRedux } from '../services/GameLogicRedux';
-import { Particle, Asteroid, Alien, Bullet, Explosion, Wave } from '../types/game';
+// Game types imported for future use
 import { store, RootState } from '../store';
 
 export class GameRenderer {

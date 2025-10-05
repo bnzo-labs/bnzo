@@ -8,15 +8,15 @@ import { QuickQuestions } from "./components/QuickQuestions";
 import { ChatInterface } from "./components/ChatInterface";
 import { ProjectModal } from "./components/ProjectModal";
 import { ExperienceModal } from "./components/ExperienceModal";
-import { Block, Project, Experience, ContactFormData } from "./types";
+import { Block, Project, Experience } from "./types";
 import { getMockResponse } from "./data/mockData";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { togglePlayMode, updateScore } from "./store/gameSlice";
+import { updateScore } from "./store/gameSlice";
 import { usageTracker } from "./utils/usageTracker";
 
 export default function Home() {
   const dispatch = useAppDispatch();
-  const { playMode, score } = useAppSelector((state: any) => state.game);
+  const { playMode, score } = useAppSelector((state: { game: { playMode: boolean; score: number } }) => state.game);
 
   const [input, setInput] = useState("");
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -35,7 +35,7 @@ export default function Home() {
     handleSubmit(mockEvent);
   };
 
-  const handleContactFormSubmit = (formData: ContactFormData) => {
+  const handleContactFormSubmit = () => {
     // Here you would typically send the form data to your backend
     // For now, just show a success message
     // In a real app, you might want to show a toast notification or update the UI
@@ -43,22 +43,25 @@ export default function Home() {
 
   const handleTogglePlayMode = () => {
     // Call the global function to handle both game logic and Redux state
-    if (typeof window !== 'undefined' && (window as any).togglePlayMode) {
-      (window as any).togglePlayMode();
+    if (typeof window !== 'undefined') {
+      const windowWithToggle = window as Window & { togglePlayMode?: () => void };
+      if (windowWithToggle.togglePlayMode) {
+        windowWithToggle.togglePlayMode();
+      }
     }
   };
 
   // Set up score update handler
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as any).onScoreUpdate = (points: number) => {
+      (window as Window & { onScoreUpdate?: (points: number) => void }).onScoreUpdate = (points: number) => {
         dispatch(updateScore(points));
       };
     }
 
     return () => {
       if (typeof window !== 'undefined') {
-        delete (window as any).onScoreUpdate;
+        delete (window as Window & { onScoreUpdate?: (points: number) => void }).onScoreUpdate;
       }
     };
   }, [dispatch]);
@@ -120,7 +123,7 @@ export default function Home() {
           setUsageLimitReached(true);
         }
       }
-    } catch (error) {
+    } catch {
       // Fallback to mock response if AI fails
       const mockResponse = getMockResponse(currentQuestion);
       setBlocks([mockResponse]);
@@ -214,7 +217,7 @@ export default function Home() {
               // Initial state - show intro
               <>
                 <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-                  Hi, I'm Erick. <br />
+                  Hi, I&apos;m Erick. <br />
                   <span className="text-4xl text-primary">Software Engineer / Frontend Developer</span>
                 </h1>
                 <p className="text-lg text-muted-foreground mb-8">

@@ -3,7 +3,6 @@
 import { Block, Project, Experience, ContactFormData } from '../types';
 import { ProjectSlider } from './ProjectSlider';
 import { ExperienceSlider } from './ExperienceSlider';
-import { ContactForm } from './ContactForm';
 
 interface ChatInterfaceProps {
   blocks: Block[];
@@ -27,8 +26,7 @@ export function ChatInterface({
   onProjectIndexChange,
   onExperienceIndexChange,
   onProjectSelect,
-  onExperienceSelect,
-  onContactFormSubmit
+  onExperienceSelect
 }: ChatInterfaceProps) {
   return (
     <div className="space-y-5 max-w-3xl mx-auto text-left pb-8">

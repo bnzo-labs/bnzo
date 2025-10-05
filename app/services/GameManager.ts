@@ -1,7 +1,7 @@
 import { GameLogicRedux } from './GameLogicRedux';
 import { GameRenderer } from '../components/GameRenderer';
 import { GameConfig, GameCallbacks } from '../types/game';
-import { store, RootState } from '../store';
+import { store } from '../store';
 import { updateMousePosition, updateTime, updateCanvasSize, togglePlayMode } from '../store/gameSlice';
 
 export class GameManager {
@@ -72,7 +72,7 @@ export class GameManager {
     }
 
     togglePlayMode() {
-        const currentState = (store.getState() as any).game;
+        const currentState = (store.getState() as { game: { playMode: boolean } }).game;
         const newPlayMode = !currentState.playMode;
 
         store.dispatch(togglePlayMode());
@@ -85,7 +85,7 @@ export class GameManager {
     }
 
     shootBullet(targetX: number, targetY: number) {
-        const gameState = (store.getState() as any).game;
+        const gameState = (store.getState() as { game: { playMode: boolean } }).game;
         if (!gameState.playMode) return;
 
         const config = this.gameLogic.getConfig();

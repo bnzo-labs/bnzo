@@ -25,7 +25,8 @@ export interface Alien extends GameObject {
 }
 
 export interface Bullet extends GameObject {
-    // Bullet-specific properties can be added here
+    life: number;
+    maxLife: number;
 }
 
 export interface Explosion {

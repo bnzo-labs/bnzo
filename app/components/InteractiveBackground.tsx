@@ -61,12 +61,12 @@ export function InteractiveBackground({ onScoreUpdate, onPlayModeToggle }: Inter
         window.addEventListener('click', handleClick)
 
             // Expose playMode toggle function globally
-            ; (window as any).togglePlayMode = () => {
+            ; (window as Window & { togglePlayMode?: () => void }).togglePlayMode = () => {
                 gameManagerRef.current?.togglePlayMode()
             }
 
             // Expose score update function globally
-            ; (window as any).updateScore = (points: number) => {
+            ; (window as Window & { updateScore?: (points: number) => void }).updateScore = (points: number) => {
                 onScoreUpdate?.(points)
             }
 
@@ -75,10 +75,10 @@ export function InteractiveBackground({ onScoreUpdate, onPlayModeToggle }: Inter
             window.removeEventListener('mousemove', handleMouseMove)
             window.removeEventListener('resize', handleResize)
             window.removeEventListener('click', handleClick)
-            delete (window as any).togglePlayMode
-            delete (window as any).updateScore
+            delete (window as Window & { togglePlayMode?: () => void }).togglePlayMode
+            delete (window as Window & { updateScore?: (points: number) => void }).updateScore
         }
-    }, [])
+    }, [onScoreUpdate, onPlayModeToggle])
 
     return (
         <canvas

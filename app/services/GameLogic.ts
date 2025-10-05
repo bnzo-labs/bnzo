@@ -1,4 +1,4 @@
-import { GameObject, Particle, Asteroid, Alien, Bullet, Explosion, Wave, GameConfig } from '../types/game';
+import { Particle, Asteroid, Alien, Bullet, Explosion, Wave, GameConfig, GameState } from '../types/game';
 import { RootState } from '../store';
 
 export class GameLogic {
@@ -68,7 +68,7 @@ export class GameLogic {
 
     createAsteroid() {
         const side = Math.floor(Math.random() * 4);
-        let x, y, vx, vy;
+        let x = 0, y = 0, vx = 0, vy = 0;
 
         switch (side) {
             case 0: // Top
@@ -112,7 +112,7 @@ export class GameLogic {
 
     createAlien() {
         const side = Math.floor(Math.random() * 4);
-        let x, y, vx, vy;
+        let x = 0, y = 0, vx = 0, vy = 0;
 
         switch (side) {
             case 0: // Top
@@ -200,14 +200,15 @@ export class GameLogic {
     private updateWaves() {
         const centerX = this.config.canvasWidth / 2;
         const centerY = this.getSpaceshipCenterY();
+        const gameState = this.getState().game;
         const mouseDistanceFromCenter = Math.sqrt(
-            Math.pow(this.gameState.mouseX - centerX, 2) +
-            Math.pow(this.gameState.mouseY - centerY, 2)
+            Math.pow(gameState.mouseX - centerX, 2) +
+            Math.pow(gameState.mouseY - centerY, 2)
         );
         const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
         const movementSpeed = (mouseDistanceFromCenter / maxDistance) * 2;
 
-        const mouseAngle = Math.atan2(this.gameState.mouseY - centerY, this.gameState.mouseX - centerX);
+        const mouseAngle = Math.atan2(gameState.mouseY - centerY, gameState.mouseX - centerX);
         const movementX = Math.cos(mouseAngle) * movementSpeed;
 
         this.waves.forEach(wave => {
@@ -218,15 +219,16 @@ export class GameLogic {
     private updateParticles() {
         const centerX = this.config.canvasWidth / 2;
         const centerY = this.getSpaceshipCenterY();
+        const gameState = this.getState().game;
         const mouseDistanceFromCenter = Math.sqrt(
-            Math.pow(this.gameState.mouseX - centerX, 2) +
-            Math.pow(this.gameState.mouseY - centerY, 2)
+            Math.pow(gameState.mouseX - centerX, 2) +
+            Math.pow(gameState.mouseY - centerY, 2)
         );
         const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
         const movementSpeed = (mouseDistanceFromCenter / maxDistance) * 2;
 
         if (movementSpeed > 0.1) {
-            const mouseAngle = Math.atan2(this.gameState.mouseY - centerY, this.gameState.mouseX - centerX);
+            const mouseAngle = Math.atan2(gameState.mouseY - centerY, gameState.mouseX - centerX);
             const particleCount = Math.floor(movementSpeed * 3) + 1;
 
             for (let i = 0; i < particleCount; i++) {
@@ -255,7 +257,8 @@ export class GameLogic {
 
     private spawnEnemies() {
         // Force create an asteroid every 60 frames for testing
-        if (Math.floor(this.gameState.time * 60) % 60 === 0 && this.asteroids.length === 0) {
+        const gameState = this.getState().game;
+        if (Math.floor(gameState.time * 60) % 60 === 0 && this.asteroids.length === 0) {
             this.createAsteroid();
         }
 
@@ -275,7 +278,7 @@ export class GameLogic {
             asteroid.life++;
 
             // Debug first asteroid position
-            if (index === 0 && Math.floor(this.gameState.time * 60) % 60 === 0) {
+            if (index === 0 && Math.floor(this.getState().game.time * 60) % 60 === 0) {
             }
 
             if (asteroid.life > asteroid.maxLife ||
@@ -338,8 +341,11 @@ export class GameLogic {
                     this.bullets.splice(bulletIndex, 1);
                     this.asteroids.splice(asteroidIndex, 1);
                     // Trigger score update for asteroid (10 points)
-                    if (typeof window !== 'undefined' && (window as any).onScoreUpdate) {
-                        (window as any).onScoreUpdate(10);
+                    if (typeof window !== 'undefined') {
+                        const windowWithScore = window as Window & { onScoreUpdate?: (points: number) => void };
+                        if (windowWithScore.onScoreUpdate) {
+                            windowWithScore.onScoreUpdate(10);
+                        }
                     }
                     break; // Exit inner loop since bullet is destroyed
                 }
@@ -360,8 +366,11 @@ export class GameLogic {
                     this.bullets.splice(bulletIndex, 1);
                     this.aliens.splice(alienIndex, 1);
                     // Trigger score update for alien (20 points)
-                    if (typeof window !== 'undefined' && (window as any).onScoreUpdate) {
-                        (window as any).onScoreUpdate(20);
+                    if (typeof window !== 'undefined') {
+                        const windowWithScore = window as Window & { onScoreUpdate?: (points: number) => void };
+                        if (windowWithScore.onScoreUpdate) {
+                            windowWithScore.onScoreUpdate(20);
+                        }
                     }
                     break; // Exit inner loop since bullet is destroyed
                 }
@@ -382,7 +391,8 @@ export class GameLogic {
     }
 
     private getSpaceshipCenterY(): number {
-        return this.gameState.playMode ? this.config.canvasHeight / 2 : this.config.canvasHeight / 2 + this.config.spaceshipOffsetY;
+        const gameState = this.getState().game;
+        return gameState.playMode ? this.config.canvasHeight / 2 : this.config.canvasHeight / 2 + this.config.spaceshipOffsetY;
     }
 
     clearGameObjects() {
@@ -399,6 +409,6 @@ export class GameLogic {
     getBullets(): Bullet[] { return this.bullets; }
     getExplosions(): Explosion[] { return this.explosions; }
     getWaves(): Wave[] { return this.waves; }
-    getGameState(): GameState { return this.gameState; }
+    getGameState(): GameState { return this.getState().game; }
     getConfig(): GameConfig { return this.config; }
 }

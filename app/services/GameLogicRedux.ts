@@ -69,7 +69,7 @@ export class GameLogicRedux {
 
     createAsteroid() {
         const side = Math.floor(Math.random() * 4);
-        let x, y, vx, vy;
+        let x = 0, y = 0, vx = 0, vy = 0;
 
         switch (side) {
             case 0: // Top
@@ -113,7 +113,7 @@ export class GameLogicRedux {
 
     createAlien() {
         const side = Math.floor(Math.random() * 4);
-        let x, y, vx, vy;
+        let x = 0, y = 0, vx = 0, vy = 0;
 
         switch (side) {
             case 0: // Top
@@ -284,7 +284,6 @@ export class GameLogicRedux {
     }
 
     private updateAliens() {
-        const gameState = this.getState().game;
         const spaceshipCenterX = this.config.canvasWidth / 2;
         const spaceshipCenterY = this.getSpaceshipCenterY();
 

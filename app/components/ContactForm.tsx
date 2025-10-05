@@ -64,7 +64,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
                     </div>
                     <h3 className="text-xl font-semibold text-foreground mb-2">Message Sent Successfully!</h3>
                     <p className="text-muted-foreground mb-6">
-                        Thank you for reaching out, {formData.name}! I'll get back to you as soon as possible.
+                        Thank you for reaching out, {formData.name}! I&apos;ll get back to you as soon as possible.
                     </p>
                     <button
                         onClick={resetForm}
@@ -82,7 +82,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
             <div className="text-center mb-4">
                 <h3 className="text-xl font-semibold text-foreground mb-2">Get In Touch</h3>
                 <p className="text-muted-foreground text-sm">
-                    Have a project in mind or just want to chat? I'd love to hear from you!
+                    Have a project in mind or just want to chat? I&apos;d love to hear from you!
                 </p>
             </div>
 
@@ -132,7 +132,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
                         onChange={handleChange}
                         required
                         className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200 text-sm"
-                        placeholder="What's this about?"
+                        placeholder="What&apos;s this about?"
                     />
                 </div>
 

@@ -93,9 +93,6 @@ const erickData = {
 export async function POST(req: NextRequest) {
     const { prompt, isLimitReached } = await req.json();
 
-    // Use the limit status from frontend localStorage
-    const maxQuestions = 5;
-
     const systemMessage = `
 You are Erick Benzo, a Senior Frontend Developer with over a decade of experience in web development. You are passionate about creating beautiful, performant web applications and love sharing your knowledge with others.
 
@@ -203,9 +200,7 @@ Return your response as JSON in this format:
             }]
         });
 
-    } catch (error) {
-        // Log error for debugging but don't expose to client
-
+    } catch {
         // Fallback to mock response if AI fails
         const mockResponse = getMockResponse(prompt);
         return NextResponse.json({
