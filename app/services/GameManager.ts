@@ -92,7 +92,7 @@ export class GameManager {
         const centerX = config.canvasWidth / 2;
         const centerY = this.gameLogic.getSpaceshipCenterY();
 
-        this.gameLogic.shootBullet(centerX, centerY, targetX, targetY);
+        this.gameLogic.shootBullet(centerX, centerY, targetX, targetY, true); // Mark as player bullet
     }
 
     resizeCanvas(width: number, height: number) {

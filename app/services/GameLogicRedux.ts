@@ -152,7 +152,7 @@ export class GameLogicRedux {
         });
     }
 
-    shootBullet(fromX: number, fromY: number, targetX: number, targetY: number) {
+    shootBullet(fromX: number, fromY: number, targetX: number, targetY: number, isPlayerBullet: boolean = false) {
         const dx = targetX - fromX;
         const dy = targetY - fromY;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -165,7 +165,8 @@ export class GameLogicRedux {
             vy: (dy / distance) * speed,
             life: 0,
             maxLife: 100,
-            opacity: 1
+            opacity: 1,
+            isPlayerBullet
         });
     }
 
@@ -200,19 +201,18 @@ export class GameLogicRedux {
     private updateWaves() {
         const gameState = this.getState().game;
         const centerX = this.config.canvasWidth / 2;
-        const centerY = this.getSpaceshipCenterY();
-        const mouseDistanceFromCenter = Math.sqrt(
-            Math.pow(gameState.mouseX - centerX, 2) +
-            Math.pow(gameState.mouseY - centerY, 2)
-        );
-        const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
-        const movementSpeed = (mouseDistanceFromCenter / maxDistance) * 2;
 
-        const mouseAngle = Math.atan2(gameState.mouseY - centerY, gameState.mouseX - centerX);
-        const movementX = Math.cos(mouseAngle) * movementSpeed;
+        // Calculate horizontal distance from spaceship
+        const horizontalDistance = gameState.mouseX - centerX;
 
+        // Normalize the horizontal distance (-1 to 1 range)
+        const maxHorizontalDistance = centerX;
+        const normalizedDistance = horizontalDistance / maxHorizontalDistance;
+
+        // Movement is ONLY based on horizontal distance
+        // Stops completely at 0 (horizontally aligned), reverses direction on opposite sides
         this.waves.forEach(wave => {
-            wave.phase += wave.speed * 0.01 + (movementX * 0.03);
+            wave.phase += normalizedDistance * wave.speed * 0.05;
         });
     }
 
@@ -227,12 +227,14 @@ export class GameLogicRedux {
         const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
         const movementSpeed = (mouseDistanceFromCenter / maxDistance) * 2;
 
-        if (movementSpeed > 0.1) {
+        // Optimized: Cap max particles and reduce creation rate
+        const maxParticles = 100;
+        if (movementSpeed > 0.1 && this.particles.length < maxParticles) {
             const mouseAngle = Math.atan2(gameState.mouseY - centerY, gameState.mouseX - centerX);
-            const particleCount = Math.floor(movementSpeed * 3) + 1;
+            const particleCount = Math.floor(movementSpeed * 2) + 1; // Reduced from 3
 
             for (let i = 0; i < particleCount; i++) {
-                if (Math.random() < 0.8) {
+                if (Math.random() < 0.5) { // Reduced from 0.8
                     const particleX = centerX - Math.cos(mouseAngle) * 25 + (Math.random() - 0.5) * 10;
                     const particleY = centerY - Math.sin(mouseAngle) * 25 + (Math.random() - 0.5) * 10;
                     const particleVx = -Math.cos(mouseAngle) * movementSpeed * 2 + (Math.random() - 0.5) * 2;
@@ -243,27 +245,29 @@ export class GameLogicRedux {
             }
         }
 
-        this.particles.forEach((particle, index) => {
+        // Optimized: Use reverse iteration for safe removal
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const particle = this.particles[i];
             particle.x += particle.vx;
             particle.y += particle.vy;
             particle.life++;
-            particle.opacity = Math.max(0, particle.opacity - 0.01);
+            particle.opacity = Math.max(0, particle.opacity - 0.02); // Faster fade
 
             if (particle.life > particle.maxLife || particle.opacity <= 0) {
-                this.particles.splice(index, 1);
+                this.particles.splice(i, 1);
             }
-        });
+        }
     }
 
     private spawnEnemies() {
         const gameState = this.getState().game;
         if (!gameState.playMode) return; // Ensure enemies only spawn in play mode
 
-        // Reduced spawn rates for better gameplay
-        if (Math.random() < 0.005) { // Reduced from 0.02
+        // Balanced spawn rates for better gameplay
+        if (Math.random() < 0.008) {
             this.createAsteroid();
         }
-        if (Math.random() < 0.003) { // Reduced from 0.01
+        if (Math.random() < 0.006) { // Reduced alien spawn rate
             this.createAlien();
         }
     }
@@ -327,10 +331,12 @@ export class GameLogicRedux {
     }
 
     private checkCollisions() {
-        // Check bullet-asteroid collisions
+        // Check PLAYER bullet-asteroid collisions
         for (let bulletIndex = this.bullets.length - 1; bulletIndex >= 0; bulletIndex--) {
+            const bullet = this.bullets[bulletIndex];
+            if (!bullet.isPlayerBullet) continue; // Only check player bullets
+
             for (let asteroidIndex = this.asteroids.length - 1; asteroidIndex >= 0; asteroidIndex--) {
-                const bullet = this.bullets[bulletIndex];
                 const asteroid = this.asteroids[asteroidIndex];
                 const distance = Math.sqrt(
                     Math.pow(bullet.x - asteroid.x, 2) +
@@ -347,10 +353,12 @@ export class GameLogicRedux {
             }
         }
 
-        // Check bullet-alien collisions
+        // Check PLAYER bullet-alien collisions
         for (let bulletIndex = this.bullets.length - 1; bulletIndex >= 0; bulletIndex--) {
+            const bullet = this.bullets[bulletIndex];
+            if (!bullet.isPlayerBullet) continue; // Only check player bullets
+
             for (let alienIndex = this.aliens.length - 1; alienIndex >= 0; alienIndex--) {
-                const bullet = this.bullets[bulletIndex];
                 const alien = this.aliens[alienIndex];
                 const distance = Math.sqrt(
                     Math.pow(bullet.x - alien.x, 2) +

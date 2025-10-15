@@ -27,6 +27,7 @@ export interface Alien extends GameObject {
 export interface Bullet extends GameObject {
     life: number;
     maxLife: number;
+    isPlayerBullet: boolean; // Track if bullet is from player or alien
 }
 
 export interface Explosion {

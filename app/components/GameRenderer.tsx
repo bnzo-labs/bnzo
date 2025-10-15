@@ -5,6 +5,8 @@ import { store, RootState } from '../store';
 export class GameRenderer {
     private ctx: CanvasRenderingContext2D;
     private gameLogic: GameLogicRedux;
+    private alienCache: Map<number, HTMLCanvasElement> = new Map();
+    private lastAlienCacheTime: number = 0;
 
     constructor(canvas: HTMLCanvasElement, gameLogic: GameLogicRedux) {
         this.ctx = canvas.getContext('2d')!;
@@ -41,7 +43,8 @@ export class GameRenderer {
             this.ctx.lineWidth = 2;
             this.ctx.beginPath();
 
-            for (let x = 0; x <= this.gameLogic.getConfig().canvasWidth; x += 2) {
+            // Optimized: Increased step from 2 to 5 for fewer points
+            for (let x = 0; x <= this.gameLogic.getConfig().canvasWidth; x += 5) {
                 const y = wave.y +
                     Math.sin(x * wave.frequency + gameState.time * wave.speed + wave.phase) * wave.amplitude +
                     Math.sin(x * wave.frequency * 2 + gameState.time * wave.speed * 1.5) * wave.amplitude * 0.3;
@@ -55,13 +58,8 @@ export class GameRenderer {
 
             this.ctx.stroke();
 
-            // Add gradient fill
-            const gradient = this.ctx.createLinearGradient(0, wave.y - wave.amplitude, 0, wave.y + wave.amplitude);
-            gradient.addColorStop(0, wave.color.replace('0.1', '0.05').replace('0.08', '0.04').replace('0.06', '0.03'));
-            gradient.addColorStop(0.5, wave.color);
-            gradient.addColorStop(1, wave.color.replace('0.1', '0.05').replace('0.08', '0.04').replace('0.06', '0.03'));
-
-            this.ctx.fillStyle = gradient;
+            // Simplified fill - no gradient, just solid color
+            this.ctx.fillStyle = wave.color;
             this.ctx.lineTo(this.gameLogic.getConfig().canvasWidth, this.gameLogic.getConfig().canvasHeight);
             this.ctx.lineTo(0, this.gameLogic.getConfig().canvasHeight);
             this.ctx.closePath();
@@ -70,8 +68,8 @@ export class GameRenderer {
             this.ctx.restore();
         });
 
-        // Add floating water bubbles
-        for (let i = 0; i < 15; i++) {
+        // Add floating water bubbles (optimized: reduced from 15 to 8)
+        for (let i = 0; i < 8; i++) {
             const x = (gameState.time * 10 + i * 120) % (this.gameLogic.getConfig().canvasWidth + 30) - 15;
             const y = this.gameLogic.getConfig().canvasHeight / 2 + Math.sin(gameState.time * 1.2 + i) * 60 + Math.sin(gameState.time * 0.4 + i * 0.3) * 30;
 
@@ -151,19 +149,10 @@ export class GameRenderer {
             this.ctx.rotate(asteroid.rotation);
             this.ctx.globalAlpha = asteroid.opacity;
 
-            // Create gradient for asteroid
-            const gradient = this.ctx.createRadialGradient(
-                -asteroid.size * 0.3, -asteroid.size * 0.3, 0,
-                0, 0, asteroid.size
-            );
-            gradient.addColorStop(0, '#9ca3af');
-            gradient.addColorStop(0.5, '#6b7280');
-            gradient.addColorStop(1, '#4b5563');
-
-            // Draw irregular asteroid shape with better design
-            this.ctx.fillStyle = gradient;
+            // Optimized: Use solid color instead of gradient
+            this.ctx.fillStyle = '#6b7280';
             this.ctx.beginPath();
-            const points = 12;
+            const points = 10; // Reduced from 12
             for (let i = 0; i < points; i++) {
                 const angle = (i / points) * Math.PI * 2;
                 const radius = asteroid.size * (0.6 + Math.sin(angle * 3) * 0.2);
@@ -179,52 +168,140 @@ export class GameRenderer {
             this.ctx.closePath();
             this.ctx.fill();
 
-            // Add asteroid highlights and details
-            this.ctx.fillStyle = '#d1d5db';
+            // Simplified highlight (one detail instead of three)
+            this.ctx.fillStyle = '#9ca3af';
             this.ctx.beginPath();
-            this.ctx.arc(-asteroid.size * 0.25, -asteroid.size * 0.25, asteroid.size * 0.15, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            // Add some crater details
-            this.ctx.fillStyle = '#4b5563';
-            this.ctx.beginPath();
-            this.ctx.arc(asteroid.size * 0.2, asteroid.size * 0.1, asteroid.size * 0.08, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            this.ctx.beginPath();
-            this.ctx.arc(-asteroid.size * 0.1, asteroid.size * 0.2, asteroid.size * 0.06, 0, Math.PI * 2);
+            this.ctx.arc(-asteroid.size * 0.2, -asteroid.size * 0.2, asteroid.size * 0.2, 0, Math.PI * 2);
             this.ctx.fill();
 
             this.ctx.restore();
         });
     }
 
+    private getAlienBaseCanvas(size: number): HTMLCanvasElement {
+        const cacheKey = Math.round(size);
+
+        if (!this.alienCache.has(cacheKey)) {
+            const canvas = document.createElement('canvas');
+            const padding = size * 0.5;
+            canvas.width = (size * 2.5 + padding * 2);
+            canvas.height = (size * 2 + padding * 2);
+            const ctx = canvas.getContext('2d')!;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            ctx.translate(centerX, centerY);
+
+            // Bottom UFO disc with gradient
+            const discGradient = ctx.createRadialGradient(0, size * 0.1, 0, 0, size * 0.1, size * 1.2);
+            discGradient.addColorStop(0, '#dc2626');
+            discGradient.addColorStop(0.6, '#991b1b');
+            discGradient.addColorStop(1, '#7f1d1d');
+
+            ctx.fillStyle = discGradient;
+            ctx.beginPath();
+            ctx.ellipse(0, size * 0.1, size * 1.2, size * 0.4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dark underside shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(0, size * 0.2, size * 0.9, size * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Middle disc section with metallic look
+            const middleGradient = ctx.createLinearGradient(-size, 0, size, 0);
+            middleGradient.addColorStop(0, '#b91c1c');
+            middleGradient.addColorStop(0.5, '#ef4444');
+            middleGradient.addColorStop(1, '#b91c1c');
+
+            ctx.fillStyle = middleGradient;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, size, size * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Top dome with glass effect
+            const domeGradient = ctx.createRadialGradient(
+                -size * 0.2, -size * 0.3, 0,
+                0, -size * 0.2, size * 0.6
+            );
+            domeGradient.addColorStop(0, 'rgba(147, 197, 253, 0.8)');
+            domeGradient.addColorStop(0.5, 'rgba(96, 165, 250, 0.6)');
+            domeGradient.addColorStop(1, 'rgba(59, 130, 246, 0.4)');
+
+            ctx.fillStyle = domeGradient;
+            ctx.beginPath();
+            ctx.ellipse(0, -size * 0.2, size * 0.6, size * 0.5, 0, 0, Math.PI, true);
+            ctx.fill();
+
+            // Dome highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(-size * 0.15, -size * 0.35, size * 0.25, size * 0.15, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Antenna
+            ctx.strokeStyle = '#9ca3af';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, -size * 0.6);
+            ctx.lineTo(0, -size * 0.85);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(0, -size * 0.9, size * 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            this.alienCache.set(cacheKey, canvas);
+        }
+
+        return this.alienCache.get(cacheKey)!;
+    }
+
     private renderAliens() {
         const aliens = this.gameLogic.getAliens();
+        const gameState = (store.getState() as RootState).game;
+
+        // Update cache only every 100ms if needed
+        const now = Date.now();
+        if (now - this.lastAlienCacheTime > 100 && this.alienCache.size > 10) {
+            this.alienCache.clear();
+            this.lastAlienCacheTime = now;
+        }
 
         aliens.forEach(alien => {
             this.ctx.save();
             this.ctx.translate(alien.x, alien.y);
             this.ctx.globalAlpha = alien.opacity;
 
-            // Alien body
-            this.ctx.fillStyle = '#ef4444';
-            this.ctx.beginPath();
-            this.ctx.ellipse(0, 0, alien.size, alien.size * 0.8, 0, 0, Math.PI * 2);
-            this.ctx.fill();
+            // Draw cached base UFO
+            const baseCanvas = this.getAlienBaseCanvas(alien.size);
+            this.ctx.drawImage(baseCanvas, -baseCanvas.width / 2, -baseCanvas.height / 2);
 
-            // Alien eyes
-            this.ctx.fillStyle = '#ffffff';
-            this.ctx.beginPath();
-            this.ctx.arc(-alien.size * 0.3, -alien.size * 0.2, alien.size * 0.15, 0, Math.PI * 2);
-            this.ctx.arc(alien.size * 0.3, -alien.size * 0.2, alien.size * 0.15, 0, Math.PI * 2);
-            this.ctx.fill();
+            // Only animate lights (simplified - fewer lights, simpler rendering)
+            const numLights = 6; // Reduced from 8
+            const time = gameState.time;
+            for (let i = 0; i < numLights; i++) {
+                const angle = (i / numLights) * Math.PI * 2 + time * 2;
+                const lightX = Math.cos(angle) * alien.size * 0.85;
+                const lightY = Math.sin(angle) * alien.size * 0.3 + alien.size * 0.05;
 
-            // Alien pupils
-            this.ctx.fillStyle = '#000000';
+                const pulseIntensity = 0.6 + Math.sin(time * 3 + i) * 0.4;
+
+                // Simplified glow - single circle
+                this.ctx.fillStyle = `rgba(251, 191, 36, ${0.6 * pulseIntensity})`;
+                this.ctx.beginPath();
+                this.ctx.arc(lightX, lightY, alien.size * 0.12, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+
+            // Simplified antenna glow
+            const antennaPulse = 0.7 + Math.sin(time * 4) * 0.3;
+            this.ctx.fillStyle = `rgba(239, 68, 68, ${antennaPulse * 0.5})`;
             this.ctx.beginPath();
-            this.ctx.arc(-alien.size * 0.3, -alien.size * 0.2, alien.size * 0.08, 0, Math.PI * 2);
-            this.ctx.arc(alien.size * 0.3, -alien.size * 0.2, alien.size * 0.08, 0, Math.PI * 2);
+            this.ctx.arc(0, -alien.size * 0.9, alien.size * 0.15, 0, Math.PI * 2);
             this.ctx.fill();
 
             this.ctx.restore();

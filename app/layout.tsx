@@ -17,6 +17,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Erick - Software Engineer",
   description: "Software Engineer / Frontend Developer - Ask me anything about my work, projects, experience or tips",
+  icons: {
+    icon: [
+      { url: '/logo.webp', sizes: 'any', type: 'image/webp' },
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' }
+    ],
+    apple: [
+      { url: '/logo.webp', sizes: '180x180', type: 'image/webp' }
+    ],
+    shortcut: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
