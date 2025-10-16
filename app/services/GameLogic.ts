@@ -151,7 +151,7 @@ export class GameLogic {
         });
     }
 
-    shootBullet(fromX: number, fromY: number, targetX: number, targetY: number) {
+    shootBullet(fromX: number, fromY: number, targetX: number, targetY: number, isPlayerBullet: boolean = false) {
         const dx = targetX - fromX;
         const dy = targetY - fromY;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -164,7 +164,8 @@ export class GameLogic {
             vy: (dy / distance) * speed,
             life: 0,
             maxLife: 100,
-            opacity: 1
+            opacity: 1,
+            isPlayerBullet
         });
     }
 
