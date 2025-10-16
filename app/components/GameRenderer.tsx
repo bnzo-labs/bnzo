@@ -100,15 +100,15 @@ export class GameRenderer {
     private renderSpaceship() {
         const config = this.gameLogic.getConfig();
         const gameState = (store.getState() as RootState).game;
-        const centerX = config.canvasWidth / 2;
-        const centerY = this.gameLogic.getSpaceshipCenterY();
+        const spaceshipX = gameState.spaceshipX;
+        const spaceshipY = gameState.spaceshipY;
         const spaceshipSize = config.spaceshipSize;
 
         // Calculate spaceship rotation based on mouse position
-        const angle = Math.atan2(gameState.mouseY - centerY, gameState.mouseX - centerX);
+        const angle = Math.atan2(gameState.mouseY - spaceshipY, gameState.mouseX - spaceshipX);
 
         this.ctx.save();
-        this.ctx.translate(centerX, centerY);
+        this.ctx.translate(spaceshipX, spaceshipY);
         this.ctx.rotate(angle);
 
         // Spaceship body

@@ -1,6 +1,6 @@
 import { Particle, Asteroid, Alien, Bullet, Explosion, Wave, GameConfig } from '../types/game';
 import { RootState, store } from '../store';
-import { updateScore, updateSpaceshipAnimation } from '../store/gameSlice';
+import { updateScore, updateSpaceshipAnimation, updateSpaceshipPosition } from '../store/gameSlice';
 
 export class GameLogicRedux {
     private particles: Particle[] = [];
@@ -11,6 +11,7 @@ export class GameLogicRedux {
     private waves: Wave[] = [];
     private config: GameConfig;
     private getState: () => RootState;
+    private readonly SPACESHIP_MOVEMENT_RANGE = 150; // Maximum pixels spaceship can move from center
 
     constructor(config: GameConfig, getState: () => RootState) {
         this.config = config;
@@ -186,15 +187,45 @@ export class GameLogicRedux {
         this.updateSpaceshipAnimation();
 
         this.updateWaves();
-        this.updateParticles();
 
         if (gameState.playMode) {
+            this.updateSpaceshipMovement();
+            this.updateParticles();
             this.spawnEnemies();
             this.updateAsteroids();
             this.updateAliens();
             this.updateBullets();
             this.checkCollisions();
             this.updateExplosions();
+        }
+    }
+
+    private updateSpaceshipMovement() {
+        const gameState = this.getState().game;
+        const centerX = this.config.canvasWidth / 2;
+        const centerY = this.getSpaceshipCenterY();
+
+        // Calculate distance from mouse to spaceship center
+        const dx = gameState.mouseX - centerX;
+        const dy = gameState.mouseY - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Only move if mouse is outside a small dead zone
+        if (distance > 10) {
+            // Calculate target position within the movement range
+            const maxDistance = Math.min(distance, this.SPACESHIP_MOVEMENT_RANGE);
+            const targetX = centerX + (dx / distance) * maxDistance;
+            const targetY = centerY + (dy / distance) * maxDistance;
+
+            // Smooth interpolation to target position
+            const currentX = gameState.spaceshipX;
+            const currentY = gameState.spaceshipY;
+            const smoothing = 0.15; // Lower = smoother but slower
+
+            const newX = currentX + (targetX - currentX) * smoothing;
+            const newY = currentY + (targetY - currentY) * smoothing;
+
+            store.dispatch(updateSpaceshipPosition({ x: newX, y: newY }));
         }
     }
 
@@ -218,25 +249,25 @@ export class GameLogicRedux {
 
     private updateParticles() {
         const gameState = this.getState().game;
-        const centerX = this.config.canvasWidth / 2;
-        const centerY = this.getSpaceshipCenterY();
-        const mouseDistanceFromCenter = Math.sqrt(
-            Math.pow(gameState.mouseX - centerX, 2) +
-            Math.pow(gameState.mouseY - centerY, 2)
+        const spaceshipX = gameState.spaceshipX;
+        const spaceshipY = gameState.spaceshipY;
+        const mouseDistanceFromSpaceship = Math.sqrt(
+            Math.pow(gameState.mouseX - spaceshipX, 2) +
+            Math.pow(gameState.mouseY - spaceshipY, 2)
         );
-        const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
-        const movementSpeed = (mouseDistanceFromCenter / maxDistance) * 2;
+        const maxDistance = Math.sqrt(this.config.canvasWidth * this.config.canvasWidth + this.config.canvasHeight * this.config.canvasHeight);
+        const movementSpeed = (mouseDistanceFromSpaceship / maxDistance) * 2;
 
         // Optimized: Cap max particles and reduce creation rate
         const maxParticles = 100;
         if (movementSpeed > 0.1 && this.particles.length < maxParticles) {
-            const mouseAngle = Math.atan2(gameState.mouseY - centerY, gameState.mouseX - centerX);
+            const mouseAngle = Math.atan2(gameState.mouseY - spaceshipY, gameState.mouseX - spaceshipX);
             const particleCount = Math.floor(movementSpeed * 2) + 1; // Reduced from 3
 
             for (let i = 0; i < particleCount; i++) {
                 if (Math.random() < 0.5) { // Reduced from 0.8
-                    const particleX = centerX - Math.cos(mouseAngle) * 25 + (Math.random() - 0.5) * 10;
-                    const particleY = centerY - Math.sin(mouseAngle) * 25 + (Math.random() - 0.5) * 10;
+                    const particleX = spaceshipX - Math.cos(mouseAngle) * 25 + (Math.random() - 0.5) * 10;
+                    const particleY = spaceshipY - Math.sin(mouseAngle) * 25 + (Math.random() - 0.5) * 10;
                     const particleVx = -Math.cos(mouseAngle) * movementSpeed * 2 + (Math.random() - 0.5) * 2;
                     const particleVy = -Math.sin(mouseAngle) * movementSpeed * 2 + (Math.random() - 0.5) * 2;
 
@@ -288,8 +319,9 @@ export class GameLogicRedux {
     }
 
     private updateAliens() {
-        const spaceshipCenterX = this.config.canvasWidth / 2;
-        const spaceshipCenterY = this.getSpaceshipCenterY();
+        const gameState = this.getState().game;
+        const spaceshipX = gameState.spaceshipX;
+        const spaceshipY = gameState.spaceshipY;
 
         this.aliens.forEach((alien, index) => {
             alien.x += alien.vx;
@@ -298,7 +330,8 @@ export class GameLogicRedux {
             alien.shootTimer++;
 
             if (alien.shootTimer > 60) {
-                this.shootBullet(alien.x, alien.y, spaceshipCenterX, spaceshipCenterY);
+                // Shoot at the spaceship's current position
+                this.shootBullet(alien.x, alien.y, spaceshipX, spaceshipY);
                 alien.shootTimer = 0;
             }
 
@@ -331,6 +364,11 @@ export class GameLogicRedux {
     }
 
     private checkCollisions() {
+        const gameState = this.getState().game;
+        const spaceshipX = gameState.spaceshipX;
+        const spaceshipY = gameState.spaceshipY;
+        const spaceshipHitRadius = this.config.spaceshipSize;
+
         // Check PLAYER bullet-asteroid collisions
         for (let bulletIndex = this.bullets.length - 1; bulletIndex >= 0; bulletIndex--) {
             const bullet = this.bullets[bulletIndex];
@@ -372,6 +410,59 @@ export class GameLogicRedux {
                     store.dispatch(updateScore(20));
                     break; // Exit inner loop since bullet is destroyed
                 }
+            }
+        }
+
+        // Check ALIEN bullet-spaceship collisions
+        for (let bulletIndex = this.bullets.length - 1; bulletIndex >= 0; bulletIndex--) {
+            const bullet = this.bullets[bulletIndex];
+            if (bullet.isPlayerBullet) continue; // Only check alien bullets
+
+            const distance = Math.sqrt(
+                Math.pow(bullet.x - spaceshipX, 2) +
+                Math.pow(bullet.y - spaceshipY, 2)
+            );
+
+            if (distance < spaceshipHitRadius) {
+                // Spaceship hit! Create explosion and remove bullet
+                this.createExplosion(spaceshipX, spaceshipY, this.config.spaceshipSize * 1.5);
+                this.bullets.splice(bulletIndex, 1);
+                // Reduce score by 10 points
+                store.dispatch(updateScore(-10));
+            }
+        }
+
+        // Check asteroid-spaceship collisions
+        for (let asteroidIndex = this.asteroids.length - 1; asteroidIndex >= 0; asteroidIndex--) {
+            const asteroid = this.asteroids[asteroidIndex];
+            const distance = Math.sqrt(
+                Math.pow(asteroid.x - spaceshipX, 2) +
+                Math.pow(asteroid.y - spaceshipY, 2)
+            );
+
+            if (distance < asteroid.size + spaceshipHitRadius) {
+                // Spaceship hit by asteroid! Create explosion and remove asteroid
+                this.createExplosion(spaceshipX, spaceshipY, this.config.spaceshipSize * 2);
+                this.asteroids.splice(asteroidIndex, 1);
+                // Reduce score by 10 points
+                store.dispatch(updateScore(-10));
+            }
+        }
+
+        // Check alien-spaceship collisions
+        for (let alienIndex = this.aliens.length - 1; alienIndex >= 0; alienIndex--) {
+            const alien = this.aliens[alienIndex];
+            const distance = Math.sqrt(
+                Math.pow(alien.x - spaceshipX, 2) +
+                Math.pow(alien.y - spaceshipY, 2)
+            );
+
+            if (distance < alien.size + spaceshipHitRadius) {
+                // Spaceship hit by alien! Create explosion and remove alien
+                this.createExplosion(spaceshipX, spaceshipY, this.config.spaceshipSize * 2);
+                this.aliens.splice(alienIndex, 1);
+                // Reduce score by 10 points
+                store.dispatch(updateScore(-10));
             }
         }
     }

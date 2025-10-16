@@ -85,14 +85,14 @@ export class GameManager {
     }
 
     shootBullet(targetX: number, targetY: number) {
-        const gameState = (store.getState() as { game: { playMode: boolean } }).game;
+        const gameState = (store.getState() as { game: { playMode: boolean; spaceshipX: number; spaceshipY: number } }).game;
         if (!gameState.playMode) return;
 
-        const config = this.gameLogic.getConfig();
-        const centerX = config.canvasWidth / 2;
-        const centerY = this.gameLogic.getSpaceshipCenterY();
+        // Shoot from spaceship's current position
+        const spaceshipX = gameState.spaceshipX;
+        const spaceshipY = gameState.spaceshipY;
 
-        this.gameLogic.shootBullet(centerX, centerY, targetX, targetY, true); // Mark as player bullet
+        this.gameLogic.shootBullet(spaceshipX, spaceshipY, targetX, targetY, true); // Mark as player bullet
     }
 
     resizeCanvas(width: number, height: number) {
