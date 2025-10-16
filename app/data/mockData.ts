@@ -28,7 +28,12 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Contributed to a shared React component library, standardizing UI elements and improving code reuse and consistency across the platform.",
                     ],
                     companyUrl: "https://www.eltoncyber.com/Platform",
-                    linkedinUrl: "https://www.linkedin.com/company/eltoncyber/"
+                    linkedinUrl: "https://www.linkedin.com/company/eltoncyber/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/60a5fa?text=Diagram+Visualization",
+                        "https://placehold.co/800x600/1e293b/60a5fa?text=Data+Grid+Feature",
+                        "https://placehold.co/800x600/1e293b/60a5fa?text=Component+Library"
+                    ]
                 },
                 {
                     company: "Yard Management Solutions",
@@ -42,7 +47,11 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Optimized the SVG-based yard visualization tool, adding interactivity (drag-and-drop, zoom, live updates) and reducing loading time by 80%, greatly improving operator efficiency.",
                     ],
                     companyUrl: "https://yardmanagementsoftware.com/",
-                    linkedinUrl: "https://www.linkedin.com/company/yard-management-software/"
+                    linkedinUrl: "https://www.linkedin.com/company/yard-management-software/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/10b981?text=GPS+Tracking+Dashboard",
+                        "https://placehold.co/800x600/1e293b/10b981?text=Yard+Visualization+Tool"
+                    ]
                 },
                 {
                     company: "Goember Inc",
@@ -56,7 +65,11 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Integrated with leading dispatch systems(iCabbi, zTrip) to support real- time ride coordination and fare processing at scale.",
                     ],
                     companyUrl: "https://www.goember.com",
-                    linkedinUrl: "https://www.linkedin.com/company/goember/"
+                    linkedinUrl: "https://www.linkedin.com/company/goember/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/f59e0b?text=Passenger+Platform",
+                        "https://placehold.co/800x600/1e293b/f59e0b?text=Payment+Integration"
+                    ]
                 },
                 {
                     company: "Contobox",
@@ -70,7 +83,12 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Led the front - end development of a React - based SaaS platform, enabling clients to manage and deliver digital ad campaigns at scale while improving delivery velocity and maintainability."
                     ],
                     companyUrl: "https://www.contobox.com",
-                    linkedinUrl: "https://www.linkedin.com/company/contobox/"
+                    linkedinUrl: "https://www.linkedin.com/company/contobox/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/ec4899?text=Interactive+Ads",
+                        "https://placehold.co/800x600/1e293b/ec4899?text=SaaS+Platform",
+                        "https://placehold.co/800x600/1e293b/ec4899?text=Campaign+Manager"
+                    ]
                 },
             ],
             summary: "My experience spans from creative ad tech to enterprise SaaS and platform rebuilds, giving me a strong foundation in building interactive user experiences, scalable front-end architectures, and data-driven features. I've led teams, contributed hands-on to complex systems, and consistently delivered results that improved performance, usability, and maintainability while growing as both a developer and collaborator."
@@ -116,7 +134,12 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Contributed to a shared React component library, standardizing UI elements and improving code reuse and consistency across the platform.",
                     ],
                     companyUrl: "https://www.eltoncyber.com/Platform",
-                    linkedinUrl: "https://www.linkedin.com/company/eltoncyber/"
+                    linkedinUrl: "https://www.linkedin.com/company/eltoncyber/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/60a5fa?text=Diagram+Visualization",
+                        "https://placehold.co/800x600/1e293b/60a5fa?text=Data+Grid+Feature",
+                        "https://placehold.co/800x600/1e293b/60a5fa?text=Component+Library"
+                    ]
                 },
                 {
                     company: "Yard Management Solutions",
@@ -130,7 +153,11 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Optimized the SVG-based yard visualization tool, adding interactivity (drag-and-drop, zoom, live updates) and reducing loading time by 80%, greatly improving operator efficiency.",
                     ],
                     companyUrl: "https://yardmanagementsoftware.com/",
-                    linkedinUrl: "https://www.linkedin.com/company/yard-management-software/"
+                    linkedinUrl: "https://www.linkedin.com/company/yard-management-software/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/10b981?text=GPS+Tracking+Dashboard",
+                        "https://placehold.co/800x600/1e293b/10b981?text=Yard+Visualization+Tool"
+                    ]
                 },
                 {
                     company: "Goember Inc",
@@ -144,7 +171,11 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Integrated with leading dispatch systems(iCabbi, zTrip) to support real- time ride coordination and fare processing at scale.",
                     ],
                     companyUrl: "https://www.goember.com",
-                    linkedinUrl: "https://www.linkedin.com/company/goember/"
+                    linkedinUrl: "https://www.linkedin.com/company/goember/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/f59e0b?text=Passenger+Platform",
+                        "https://placehold.co/800x600/1e293b/f59e0b?text=Payment+Integration"
+                    ]
                 },
                 {
                     company: "Contobox",
@@ -158,7 +189,12 @@ export const getMockResponse = (currentQuestion: string): Block => {
                         "Led the front - end development of a React - based SaaS platform, enabling clients to manage and deliver digital ad campaigns at scale while improving delivery velocity and maintainability."
                     ],
                     companyUrl: "https://www.contobox.com",
-                    linkedinUrl: "https://www.linkedin.com/company/contobox/"
+                    linkedinUrl: "https://www.linkedin.com/company/contobox/",
+                    screenshots: [
+                        "https://placehold.co/800x600/1e293b/ec4899?text=Interactive+Ads",
+                        "https://placehold.co/800x600/1e293b/ec4899?text=SaaS+Platform",
+                        "https://placehold.co/800x600/1e293b/ec4899?text=Campaign+Manager"
+                    ]
                 },
             ],
             summary: "My experience spans from creative ad tech to enterprise SaaS and platform rebuilds, giving me a strong foundation in building interactive user experiences, scalable front-end architectures, and data-driven features. I’ve led teams, contributed hands-on to complex systems, and consistently delivered results that improved performance, usability, and maintainability while growing as both a developer and collaborator."

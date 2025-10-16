@@ -28,11 +28,23 @@ export default function Home() {
   const [currentExperienceIndex, setCurrentExperienceIndex] = useState(0);
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null);
   const [usageLimitReached, setUsageLimitReached] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const handleQuestionSelect = (question: string) => {
-    setInput(question);
-    const mockEvent = { preventDefault: () => { } } as React.FormEvent;
-    handleSubmit(mockEvent);
+    // For quick questions, use mock data immediately without API call
+    const currentQuestion = question.trim();
+
+    // Clear previous content and show user question
+    setBlocks([]);
+    setUserQuestions([currentQuestion]);
+    setLoading(true);
+
+    // Use mock response directly (quick questions don't need AI)
+    setTimeout(() => {
+      const mockResponse = getMockResponse(currentQuestion);
+      setBlocks([mockResponse]);
+      setLoading(false);
+    }, 300); // Short delay for smooth UX
   };
 
   const handleContactFormSubmit = () => {
@@ -211,22 +223,24 @@ export default function Home() {
 
       {/* Hero Section - Dynamic content area */}
       {!playMode && (
-        <section className="flex-1 flex items-center justify-center p-6 pt-35 pb-40">
-          <div className="max-w-4xl mx-auto text-center w-full">
+        <section className="min-h-screen flex items-center justify-center px-6 pt-32 pb-48">
+          <div className="max-w-6xl mx-auto text-center w-full">
             {blocks.length === 0 && userQuestions.length === 0 ? (
-              // Initial state - show intro
-              <>
+              // Initial state - show intro with animation
+              <div className="animate-fadeInDown">
                 <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
                   Hi, I&apos;m Erick. <br />
-                  <span className="text-4xl text-primary">Software Engineer / Frontend Developer</span>
+                  <span className="text-4xl md:text-5xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                    Software Engineer / Frontend Developer
+                  </span>
                 </h1>
-                <p className="text-lg text-muted-foreground mb-8">
+                <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
                   Ask me anything about my work, projects, experience or tips below.
                 </p>
-              </>
+              </div>
             ) : (
-              // Dynamic content - show conversation with scrollable container
-              <div className="w-full max-h-[calc(100vh-300px)] overflow-y-auto pr-2">
+              // Dynamic content - full page scroll
+              <div className="w-full">
                 <ChatInterface
                   blocks={blocks}
                   userQuestions={userQuestions}
@@ -270,13 +284,21 @@ export default function Home() {
 
       {/* Fixed Input Section - Hidden in play mode */}
       {!playMode && (
-        <section className="fixed bottom-0 left-0 right-0 p-6">
-          <div className="max-w-3xl mx-auto">
-            {/* Quick Questions Pills */}
-            <QuickQuestions
-              onQuestionSelect={handleQuestionSelect}
-              loading={loading}
-            />
+        <section className="fixed bottom-0 left-0 right-0 p-6 z-40 pointer-events-none">
+          <div className="max-w-3xl mx-auto pointer-events-auto">
+            {/* Quick Questions Pills - Animated on focus */}
+            <div className={`transition-all duration-500 ease-out transform ${isInputFocused
+              ? 'opacity-100 translate-y-0 mb-4'
+              : 'opacity-0 translate-y-4 mb-0 pointer-events-none'
+              }`}>
+              <QuickQuestions
+                onQuestionSelect={(question) => {
+                  handleQuestionSelect(question);
+                  setIsInputFocused(false);
+                }}
+                loading={loading}
+              />
+            </div>
 
             {/* Input Form */}
             <form onSubmit={handleSubmit} className="relative">
@@ -285,14 +307,16 @@ export default function Home() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setTimeout(() => setIsInputFocused(false), 200)}
                   placeholder="Ask me anything..."
                   disabled={loading}
-                  className="w-full p-4 pr-20 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full p-4 pr-20 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 />
                 <button
                   type="submit"
                   disabled={loading || !input.trim()}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
                 >
                   {loading ? "..." : "Ask"}
                 </button>

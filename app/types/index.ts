@@ -18,6 +18,7 @@ export interface Experience {
     achievements: string[];
     companyUrl?: string;
     linkedinUrl?: string;
+    screenshots?: string[];
 }
 
 export interface SkillCategory {

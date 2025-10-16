@@ -16,10 +16,10 @@ export class GameRenderer {
     render() {
         this.clearCanvas();
         this.renderWaves();
-        this.renderParticles();
-        this.renderSpaceship();
 
         if ((store.getState() as RootState).game.playMode) {
+            this.renderParticles();
+            this.renderSpaceship();
             this.renderAsteroids();
             this.renderAliens();
             this.renderBullets();
