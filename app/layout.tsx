@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ReduxProvider } from "./components/ReduxProvider";
+import { SITE_TEXT } from "./constants/siteText";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Erick - Software Engineer",
-  description: "Software Engineer / Frontend Developer - Ask me anything about my work, projects, experience or tips",
+  title: SITE_TEXT.meta.title,
+  description: SITE_TEXT.meta.description,
   icons: {
     icon: [
       { url: '/logo.webp', sizes: 'any', type: 'image/webp' },

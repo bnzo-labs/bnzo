@@ -1,6 +1,6 @@
 'use client';
 
-import { quickQuestions } from '../data/mockData';
+import { SITE_TEXT } from '../constants/siteText';
 
 interface QuickQuestionsProps {
   onQuestionSelect: (question: string) => void;
@@ -10,7 +10,7 @@ interface QuickQuestionsProps {
 export function QuickQuestions({ onQuestionSelect, loading }: QuickQuestionsProps) {
   return (
     <div className="flex flex-wrap gap-2 mb-4 justify-center">
-      {quickQuestions.map((pill) => (
+      {SITE_TEXT.quickQuestions.map((pill) => (
         <button
           key={pill.label}
           onClick={() => onQuestionSelect(pill.question)}

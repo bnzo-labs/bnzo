@@ -13,6 +13,7 @@ import { getMockResponse } from "./data/mockData";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { updateScore } from "./store/gameSlice";
 import { usageTracker } from "./utils/usageTracker";
+import { SITE_TEXT } from "./constants/siteText";
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ export default function Home() {
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null);
   const [usageLimitReached, setUsageLimitReached] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [typedText, setTypedText] = useState("");
 
   const handleQuestionSelect = (question: string) => {
     // For quick questions, use mock data immediately without API call
@@ -83,6 +85,23 @@ export default function Home() {
     const usageStatus = usageTracker.getUsageStatus();
     setRemainingQuestions(usageStatus.remaining);
     setUsageLimitReached(usageStatus.isLimitReached);
+  }, []);
+
+  // Typing animation effect
+  useEffect(() => {
+    const fullText = SITE_TEXT.hero.greeting;
+    let currentIndex = 0;
+
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setTypedText(fullText.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 100); // Adjust speed here (100ms per character)
+
+    return () => clearInterval(typingInterval);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -175,9 +194,9 @@ export default function Home() {
                 : 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-200/30'
               }`}>
               {usageLimitReached ? (
-                <span>🎭 Demo Mode</span>
+                <span>{SITE_TEXT.usage.demoMode}</span>
               ) : (
-                <span>🤖 {remainingQuestions} AI questions left</span>
+                <span>{SITE_TEXT.usage.questionsRemaining(remainingQuestions)}</span>
               )}
             </div>
 
@@ -193,9 +212,9 @@ export default function Home() {
                   setUserQuestions([]);
                 }}
                 className="px-2 py-1 bg-red-500/20 text-red-600 dark:text-red-400 border border-red-200/30 rounded-lg text-xs font-medium hover:bg-red-500/30 transition-colors"
-                title="Reset usage (dev only)"
+                title={SITE_TEXT.usage.resetButtonTitle}
               >
-                🔄 Reset
+                {SITE_TEXT.usage.resetButton}
               </button>
             )}
           </div>
@@ -213,7 +232,7 @@ export default function Home() {
             : 'bg-muted text-muted-foreground hover:bg-muted/80'
             }`}
         >
-          {playMode ? 'Exit Game' : 'Play Mode'}
+          {playMode ? SITE_TEXT.game.exitButton : SITE_TEXT.game.playButton}
         </button>
         <ThemeToggle />
       </div>
@@ -229,13 +248,15 @@ export default function Home() {
               // Initial state - show intro with animation
               <div className="animate-fadeInDown">
                 <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-                  Hi, I&apos;m Erick. <br />
+                  {typedText}
+                  <span className="animate-pulse">|</span>
+                  <br />
                   <span className="text-4xl md:text-5xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                    Software Engineer / Frontend Developer
+                    {SITE_TEXT.hero.title}
                   </span>
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Ask me anything about my work, projects, experience or tips below.
+                  {SITE_TEXT.hero.subtitle}
                 </p>
               </div>
             ) : (
@@ -265,9 +286,9 @@ export default function Home() {
         <>
           <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 text-center">
             <div className="bg-card/90 backdrop-blur-md text-card-foreground px-6 py-4 rounded-2xl border border-border">
-              <h2 className="text-xl font-semibold mb-2">🚀 Spaceship Game</h2>
+              <h2 className="text-xl font-semibold mb-2">{SITE_TEXT.game.title}</h2>
               <p className="text-sm text-muted-foreground">
-                Move your mouse to steer the spaceship • Click to shoot • Destroy asteroids and aliens!
+                {SITE_TEXT.game.instructions}
               </p>
             </div>
           </div>
@@ -275,7 +296,7 @@ export default function Home() {
           {/* Score Display */}
           <div className="fixed top-6 left-6 z-50">
             <div className="bg-card/90 backdrop-blur-md text-card-foreground px-4 py-2 rounded-lg border border-border">
-              <div className="text-sm font-medium text-muted-foreground">Score</div>
+              <div className="text-sm font-medium text-muted-foreground">{SITE_TEXT.game.scoreLabel}</div>
               <div className="text-2xl font-bold text-primary">{score}</div>
             </div>
           </div>
@@ -309,7 +330,7 @@ export default function Home() {
                   onChange={(e) => setInput(e.target.value)}
                   onFocus={() => setIsInputFocused(true)}
                   onBlur={() => setTimeout(() => setIsInputFocused(false), 200)}
-                  placeholder="Ask me anything..."
+                  placeholder={SITE_TEXT.hero.inputPlaceholder}
                   disabled={loading}
                   className="w-full p-4 pr-20 rounded-full bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 />
@@ -318,7 +339,7 @@ export default function Home() {
                   disabled={loading || !input.trim()}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
                 >
-                  {loading ? "..." : "Ask"}
+                  {loading ? SITE_TEXT.hero.submitButtonLoading : SITE_TEXT.hero.submitButton}
                 </button>
               </div>
             </form>

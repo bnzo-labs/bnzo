@@ -1,20 +1,12 @@
-import { Block, QuickQuestion } from '../types';
-
-export const quickQuestions: QuickQuestion[] = [
-    { label: "Me", question: "tell me about yourself", emoji: "👋" },
-    { label: "My skills", question: "tell me about your skills", emoji: "💻" },
-    { label: "Experience", question: "tell me about your work experience", emoji: "💼" },
-    // { label: "My projects", question: "tell me about your recent projects", emoji: "🚀" }, // Hidden for V1
-    { label: "Fun", question: "what do you do for fun", emoji: "🎉" },
-    { label: "Contact", question: "how can I contact you", emoji: "📧" }
-];
+import { Block } from '../types';
+import { SITE_TEXT } from '../constants/siteText';
 
 export const getMockResponse = (currentQuestion: string): Block => {
     if (currentQuestion.toLowerCase().includes('project')) {
         // For V1, show work experience instead of projects
         return {
             type: "experience",
-            title: "My Work Experience & Projects",
+            title: SITE_TEXT.mockData.projectsTitle,
             experience: [
                 {
                     company: "Elton Cyber",
@@ -91,36 +83,36 @@ export const getMockResponse = (currentQuestion: string): Block => {
                     ]
                 },
             ],
-            summary: "My experience spans from creative ad tech to enterprise SaaS and platform rebuilds, giving me a strong foundation in building interactive user experiences, scalable front-end architectures, and data-driven features. I've led teams, contributed hands-on to complex systems, and consistently delivered results that improved performance, usability, and maintainability while growing as both a developer and collaborator."
+            summary: SITE_TEXT.mockData.experienceSummary
         };
     } else if (currentQuestion.toLowerCase().includes('skill')) {
         return {
             type: "skills",
-            title: "My Technical Skills",
+            title: SITE_TEXT.mockData.skillsTitle,
             skills: [
                 {
-                    category: "Frontend",
+                    category: SITE_TEXT.mockData.skillCategories.frontend,
                     skills: ["React", "Next.js", "TypeScript", "Tailwind CSS"]
                 },
                 {
-                    category: "Backend",
+                    category: SITE_TEXT.mockData.skillCategories.backend,
                     skills: ["Node.js", "Express", "Go", "Laravel", "PostgreSQL", "MongoDB"]
                 },
                 {
-                    category: "Tools & DevOps",
+                    category: SITE_TEXT.mockData.skillCategories.tools,
                     skills: ["Git", "Docker", "AWS", "Vercel", "Figma", "VS Code"]
                 },
                 {
-                    category: "Languages",
+                    category: SITE_TEXT.mockData.skillCategories.languages,
                     skills: ["JavaScript", "TypeScript", "Go", "SQL", "HTML", "CSS"]
                 }
             ],
-            summary: "I'm passionate about creating beautiful, performant web applications. My skill set spans the full development stack, allowing me to build complete solutions from concept to deployment."
+            summary: SITE_TEXT.mockData.skillsSummary
         };
     } else if (currentQuestion.toLowerCase().includes('experience') || currentQuestion.toLowerCase().includes('work')) {
         return {
             type: "experience",
-            title: "My Work Experience",
+            title: SITE_TEXT.mockData.experienceTitle,
             experience: [
                 {
                     company: "Elton Cyber",
@@ -136,9 +128,8 @@ export const getMockResponse = (currentQuestion: string): Block => {
                     companyUrl: "https://www.eltoncyber.com/Platform",
                     linkedinUrl: "https://www.linkedin.com/company/eltoncyber/",
                     screenshots: [
-                        "https://placehold.co/800x600/1e293b/60a5fa?text=Diagram+Visualization",
-                        "https://placehold.co/800x600/1e293b/60a5fa?text=Data+Grid+Feature",
-                        "https://placehold.co/800x600/1e293b/60a5fa?text=Component+Library"
+                        "/projects/elton.webp",
+                        "/projects/elton.jpg"
                     ]
                 },
                 {
@@ -155,8 +146,8 @@ export const getMockResponse = (currentQuestion: string): Block => {
                     companyUrl: "https://yardmanagementsoftware.com/",
                     linkedinUrl: "https://www.linkedin.com/company/yard-management-software/",
                     screenshots: [
-                        "https://placehold.co/800x600/1e293b/10b981?text=GPS+Tracking+Dashboard",
-                        "https://placehold.co/800x600/1e293b/10b981?text=Yard+Visualization+Tool"
+                        "/projects/yms.jpg",
+                        "/projects/yms-2.png"
                     ]
                 },
                 {
@@ -173,8 +164,7 @@ export const getMockResponse = (currentQuestion: string): Block => {
                     companyUrl: "https://www.goember.com",
                     linkedinUrl: "https://www.linkedin.com/company/goember/",
                     screenshots: [
-                        "https://placehold.co/800x600/1e293b/f59e0b?text=Passenger+Platform",
-                        "https://placehold.co/800x600/1e293b/f59e0b?text=Payment+Integration"
+                        "/projects/ember.jpg",
                     ]
                 },
                 {
@@ -191,60 +181,58 @@ export const getMockResponse = (currentQuestion: string): Block => {
                     companyUrl: "https://www.contobox.com",
                     linkedinUrl: "https://www.linkedin.com/company/contobox/",
                     screenshots: [
-                        "https://placehold.co/800x600/1e293b/ec4899?text=Interactive+Ads",
-                        "https://placehold.co/800x600/1e293b/ec4899?text=SaaS+Platform",
-                        "https://placehold.co/800x600/1e293b/ec4899?text=Campaign+Manager"
+                        "/projects/contobox.png"
                     ]
                 },
             ],
-            summary: "My experience spans from creative ad tech to enterprise SaaS and platform rebuilds, giving me a strong foundation in building interactive user experiences, scalable front-end architectures, and data-driven features. I’ve led teams, contributed hands-on to complex systems, and consistently delivered results that improved performance, usability, and maintainability while growing as both a developer and collaborator."
+            summary: SITE_TEXT.mockData.experienceSummary
         };
     } else if (currentQuestion.toLowerCase().includes('contact')) {
         return {
             type: "contact",
-            title: "Let's Connect!",
-            message: "I'd love to hear from you! Whether you have a project in mind, want to collaborate, or just want to chat about technology, feel free to reach out.",
+            title: SITE_TEXT.mockData.contactTitle,
+            message: SITE_TEXT.mockData.contactMessage,
             contactInfo: [
                 {
-                    method: "Email",
+                    method: SITE_TEXT.mockData.contactMethods.email,
                     value: "erick@bnzo.io",
                     icon: "📧",
                     link: "mailto:erick@bnzo.io"
                 },
                 {
-                    method: "LinkedIn",
+                    method: SITE_TEXT.mockData.contactMethods.linkedin,
                     value: "linkedin.com/in/erickbenzo/",
                     icon: "💼",
                     link: "https://www.linkedin.com/in/erickbenzo/"
                 },
                 {
-                    method: "GitHub",
+                    method: SITE_TEXT.mockData.contactMethods.github,
                     value: "github.com/benerick",
                     icon: "🐙",
                     link: "https://github.com/benerick"
                 }
             ],
-            summary: "I'm always excited to connect with fellow developers, potential clients, or anyone interested in technology. Don't hesitate to drop me a line!"
+            summary: SITE_TEXT.mockData.contactSummary
         };
     } else {
         return {
             type: "general",
-            title: "About Me",
+            title: SITE_TEXT.mockData.aboutMeTitle,
             items: [
                 {
-                    title: "Experience",
-                    text: "5+ years of experience in web development, specializing in modern JavaScript frameworks and full-stack applications."
+                    title: SITE_TEXT.mockData.aboutMeExperienceTitle,
+                    text: SITE_TEXT.mockData.aboutMeExperienceText
                 },
                 {
-                    title: "Education",
-                    text: "Computer Science degree with focus on software engineering and user experience design."
+                    title: SITE_TEXT.mockData.aboutMeEducationTitle,
+                    text: SITE_TEXT.mockData.aboutMeEducationText
                 },
                 {
-                    title: "Passion",
-                    text: "I love creating intuitive, accessible web experiences that solve real-world problems."
+                    title: SITE_TEXT.mockData.aboutMePassionTitle,
+                    text: SITE_TEXT.mockData.aboutMePassionText
                 }
             ],
-            summary: "I'm a passionate developer who loves building things that matter. Whether it's a simple website or a complex application, I approach every project with enthusiasm and attention to detail."
+            summary: SITE_TEXT.mockData.aboutMeSummary
         };
     }
 };

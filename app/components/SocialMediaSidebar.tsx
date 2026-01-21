@@ -58,7 +58,7 @@ export function SocialMediaSidebar() {
 
                 {/* Download Resume */}
                 <a
-                    href="/ErickBenzoV.pdf"
+                    href="/ErickBenzoFE.pdf"
                     download
                     className="w-12 h-12 bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-full flex items-center justify-center hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-200"
                     aria-label="Download Resume"

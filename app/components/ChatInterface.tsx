@@ -4,6 +4,7 @@ import { Block, Project, Experience, ContactFormData } from '../types';
 import { ProjectSlider } from './ProjectSlider';
 import { ExperienceSlider } from './ExperienceSlider';
 import { useEffect, useRef } from 'react';
+import { SITE_TEXT } from '../constants/siteText';
 
 // Helper function to get technology icon
 const getTechIcon = (skillName: string): string | null => {
@@ -332,7 +333,7 @@ export function ChatInterface({
                 <div className="flex items-center gap-3 mb-6">
                   <div className="h-12 w-1 bg-gradient-to-b from-orange-500 to-red-500 rounded-full group-hover:h-16 transition-all duration-500"></div>
                   <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
-                    <span className="group-hover:scale-125 transition-transform duration-300">🤔</span> {block.title || "That's not quite my area!"}
+                    <span className="group-hover:scale-125 transition-transform duration-300">🤔</span> {block.title || SITE_TEXT.chat.fallbackTitle}
                   </h2>
                 </div>
                 <p className="text-foreground/80 leading-relaxed mb-6 text-lg">{block.message}</p>
@@ -348,7 +349,7 @@ export function ChatInterface({
 
                 <div className="p-5 bg-gradient-to-r from-primary/10 to-transparent rounded-2xl border-l-4 border-primary">
                   <p className="text-base text-foreground/80 leading-relaxed">
-                    💡 Try asking me about my work experience, projects, skills, or anything tech-related!
+                    {SITE_TEXT.chat.fallbackSuggestion}
                   </p>
                 </div>
               </div>
@@ -365,12 +366,12 @@ export function ChatInterface({
                     {block.title}
                     {block.aiEnhanced && (
                       <span className="px-3 py-1 bg-gradient-to-r from-primary/20 to-primary/10 text-primary text-xs font-bold rounded-full border border-primary/20">
-                        ✨ AI Enhanced
+                        {SITE_TEXT.chat.aiEnhanced}
                       </span>
                     )}
                     {block.usageLimitReached && (
                       <span className="px-3 py-1 bg-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-bold rounded-full border border-orange-400/20">
-                        🎭 Demo Mode
+                        {SITE_TEXT.chat.demoMode}
                       </span>
                     )}
                   </h2>
@@ -430,7 +431,7 @@ export function ChatInterface({
                 <div className="w-3 h-3 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                 <div className="w-3 h-3 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
-              <span className="text-base font-medium bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">Thinking...</span>
+              <span className="text-base font-medium bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">{SITE_TEXT.chat.thinking}</span>
             </div>
           </div>
         </div>
