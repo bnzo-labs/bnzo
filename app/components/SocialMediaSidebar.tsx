@@ -44,7 +44,7 @@ export function SocialMediaSidebar() {
                 </a> */}
 
                 {/* X (Twitter) */}
-                <a
+                {/*<a
                     href="https://x.com/bnz0dev"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -54,11 +54,11 @@ export function SocialMediaSidebar() {
                     <svg className="w-6 h-6 text-foreground" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
-                </a>
+                </a>*/}
 
                 {/* Download Resume */}
                 <a
-                    href="/ErickBenzoFE.pdf"
+                    href="/ErickBenzoSFE.pdf"
                     download
                     className="w-12 h-12 bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-full flex items-center justify-center hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-200"
                     aria-label="Download Resume"

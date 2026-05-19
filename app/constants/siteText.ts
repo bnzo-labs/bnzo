@@ -7,7 +7,7 @@ export const SITE_TEXT = {
     // Main page - Hero section
     hero: {
         greeting: "Hi, I'm Erick.",
-        title: "Frontend developer",
+        title: "Senior Frontend Engineer",
         subtitle: "Ask me anything about my work, projects, experience or tips below.",
         inputPlaceholder: "Ask me anything...",
         submitButton: "Ask",

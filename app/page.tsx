@@ -175,7 +175,7 @@ export default function Home() {
       <div className="fixed top-6 left-6 z-50">
         <div className="w-16 h-16 relative">
           <img
-            src="/logo.webp"
+            src="/erick.webp"
             alt="Erick Logo"
             className="w-full h-full object-contain drop-shadow-lg rounded-full"
           />
