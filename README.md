@@ -1,100 +1,46 @@
-# Erick Benzo - Interactive Portfolio
+# Erick Benzo — Interactive Portfolio
 
-This is an interactive portfolio website built with [Next.js](https://nextjs.org) that features an AI-powered chat interface. The AI is trained to respond as Erick Benzo, a Senior Frontend Developer, using his actual professional data and experience.
+> A conversational portfolio. Instead of scrolling through static "About / Experience / Skills" pages, visitors ask natural-language questions and get answers grounded in my actual professional context.
 
-## Features (V1)
+**Live:** [erick.bnzo.io](https://erick.bnzo.io)
 
-- 🤖 **AI-Powered Chat Interface**: Ask questions about Erick's work, experience, and skills
-- 💼 **Work Experience Showcase**: Detailed professional background and achievements
-- 🎮 **Interactive Game Mode**: Fun spaceship game with scoring system
-- 🌙 **Dark/Light Theme Toggle**: Beautiful theme switching
-- 📱 **Responsive Design**: Works perfectly on all devices
-- 🎨 **Modern UI**: Built with Tailwind CSS and Framer Motion
-- 🔄 **Real-time Responses**: AI responds with Erick's personality and expertise
-- 📧 **Contact Information**: Direct contact details and social links
+---
 
-## AI Integration
+## Why
 
-The portfolio includes a sophisticated AI system that:
-- Responds as Erick using his actual professional background
-- Provides detailed answers about work experience, skills, and projects
-- Gives witty responses to unrelated questions
-- Maintains Erick's enthusiastic and helpful personality
-- **Usage Limit**: Automatically switches to demo mode after 5 AI questions to control costs
-- Falls back to mock data if AI is unavailable or limit is reached
+Personal sites are mostly read-once and forgotten. The interesting questions a recruiter, collaborator, or curious dev wants to ask: *"have you worked with X stack?"*, *"how did you approach Y problem?"*, *"what's your take on Z?"* usually aren't answered on a static page.
 
-### Usage Limits & Cost Control
+This portfolio is an experiment in replacing low-value page reads with a higher-bandwidth Q&A interface, while keeping a static fallback for crawlers and JS-off visitors.
 
-To manage OpenAI API costs, the system includes:
-- **5 Question Limit**: Users get 5 AI-enhanced responses per browser session
-- **Persistent Tracking**: Uses localStorage to remember usage across page refreshes
-- **Visual Indicators**: Shows remaining AI questions and demo mode status
-- **Graceful Degradation**: Seamlessly switches to mock data after limit
-- **User Notifications**: Clear messaging about usage limits and demo mode
-- **Reset Required**: Users must clear browser data to get more AI questions
+## Architecture
 
-## Setup
+- **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS, Framer Motion
+- **LLM backend:** Next.js API routes proxying to OpenAI
+- **Grounding strategy:** Structured profile data (experience, projects, technical opinions, tone guidelines) injected as system context per request. No fine-tuning, no RAG, the corpus fits comfortably in a system prompt.
+- **Rate limiting:** 5 LLM-backed queries per browser session, tracked via `localStorage`. After the limit, the UI falls back to scripted answers with clear messaging.
+- **Graceful degradation:** If the LLM request fails or the limit is reached, scripted fallback responses keep the experience usable. Static sections remain readable with JS disabled.
 
-### Prerequisites
+## Design decisions
 
-- Node.js 18+ 
-- OpenAI API key
+- **No fine-tuning.** The profile fits cleanly in a system prompt. Fine-tuning would add cost and complexity for no real gain, and grounding stays easy to update as my career evolves.
+- **No RAG.** The corpus is small enough that everything relevant goes in context. Embeddings + a vector store would be over-engineering for this scope.
+- **Client-side rate limit (localStorage).** Acknowledged limitation: a determined user can clear storage and reset. For a public-demo portfolio, this is intentionally lightweight, the goal is cost control, not auth. A production AI feature would do server-side rate limiting per IP or user.
+- **Static fallback is first-class, not an afterthought.** ATS bots, search crawlers, and JS-off visitors get legible content. The chat is an enhancement, not a gate.
 
-### Installation
+## Stack
 
-1. Clone the repository
-2. Install dependencies:
+Next.js · TypeScript · Tailwind CSS · Framer Motion · OpenAI API · Vercel
+
+## Local development
+
 ```bash
 npm install
-```
-
-3. Set up environment variables:
-Create a `.env.local` file in the root directory:
-```bash
-OPENAI_API_KEY=your_openai_api_key_here
-```
-
-You can get an OpenAI API key from: https://platform.openai.com/api-keys
-
-4. Run the development server:
-```bash
+echo "OPENAI_API_KEY=your_key" > .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-### Usage Limit Behavior
+---
 
-The system automatically manages OpenAI API usage:
-
-1. **First 5 Questions**: Full AI responses with Erick's personality
-2. **Question 6+**: Demo mode using mock data with clear notifications
-3. **Persistent Tracking**: Usage stored in browser localStorage
-4. **Visual Feedback**: 
-   - Green indicator: 3+ AI questions remaining
-   - Yellow indicator: 1-2 AI questions remaining  
-   - Orange indicator: Demo mode active
-5. **Reset Behavior**: Users must clear browser data to reset usage
-6. **Development Mode**: Reset button available for testing
-
-### Testing Usage Limits
-
-A test page is included to verify localStorage persistence:
-- Open `test-localstorage.html` in your browser
-- Simulate questions to test the tracking system
-- Verify that usage persists across page refreshes
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[erick.bnzo.io](https://erick.bnzo.io) · [LinkedIn](https://www.linkedin.com/in/erickbenzo) · [GitHub](https://github.com/benerick)
